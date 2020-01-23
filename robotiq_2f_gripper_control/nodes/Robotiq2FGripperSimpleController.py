@@ -67,36 +67,36 @@ def genCommand(char, command):
     if char == 'o':
         command.rPR = 0   
 
-    #If the command entered is a int, assign this value to rPRA
-    try: 
-        command.rPR = int(char)
-        if command.rPR > 255:
-            command.rPR = 255
-        if command.rPR < 0:
-            command.rPR = 0
+    #If the command entered has both a char and an int, check rPR, rSP, or rFR
+    try:
+        if char.split()[0] == 'p':
+            command.rPR = int(char.split()[1])
+            if command.rPR > 255:
+                command.rPR = 255
+            if command.rPR < 0:
+                command.rPR = 0
     except ValueError:
-        pass                    
-        
-    if char == 'f':
-        command.rSP += 25
-        if command.rSP > 255:
-            command.rSP = 255
-            
-    if char == 'l':
-        command.rSP -= 25
-        if command.rSP < 0:
-            command.rSP = 0
+        pass
 
-            
-    if char == 'i':
-        command.rFR += 25
-        if command.rFR > 255:
-            command.rFR = 255
-            
-    if char == 'd':
-        command.rFR -= 25
-        if command.rFR < 0:
-            command.rFR = 0
+    try: 
+        if char.split()[0] == 's':
+            command.rSP = int(char.split()[1])
+            if command.rSP > 255:
+                command.rSP = 255
+            if command.rSP < 0:
+                command.rSP = 0
+    except ValueError:
+        pass
+
+    try:
+        if char.split()[0] == 'f': 
+            command.rFR = int(char.split()[1])
+            if command.rFR > 255:
+                command.rFR = 255
+            if command.rFR < 0:
+                command.rFR = 0
+    except ValueError:
+        pass                                
 
     return command
         
@@ -120,11 +120,9 @@ def askForCommand(command):
     strAskForCommand += 'a: Activate\n'
     strAskForCommand += 'c: Close\n'
     strAskForCommand += 'o: Open\n'
-    strAskForCommand += '(0-255): Go to that position\n'
-    strAskForCommand += 'f: Faster\n'
-    strAskForCommand += 'l: Slower\n'
-    strAskForCommand += 'i: Increase force\n'
-    strAskForCommand += 'd: Decrease force\n'
+    strAskForCommand += 'p (0-255): Go to that position\n'
+    strAskForCommand += 's (0-255): Set the speed\n'
+    strAskForCommand += 'f (0-255): Set the force\n'
     
     strAskForCommand += '-->'
 
