@@ -50,8 +50,11 @@ import os, sys
 from robotiq_2f_gripper_control.msg import _Robotiq2FGripper_robot_input  as inputMsg
 from robotiq_2f_gripper_control.msg import _Robotiq2FGripper_robot_output as outputMsg
 
-def mainLoop(device):
+def mainLoop():
+    rospy.init_node('robotiq2FGripper')
     
+    device = rospy.get_param('~serial_device', '/dev/USB0')
+
     #Gripper is a 2F with a TCP connection
     gripper = robotiq_2f_gripper_control.baseRobotiq2FGripper.robotiqbaseRobotiq2FGripper()
     gripper.client = robotiq_modbus_rtu.comModbusRtu.communication()
@@ -59,10 +62,8 @@ def mainLoop(device):
     #We connect to the address received as an argument
     gripper.client.connectToDevice(device)
 
-    rospy.init_node('robotiq2FGripper')
-
     #The Gripper status is published on the topic named 'Robotiq2FGripperRobotInput'
-    pub = rospy.Publisher('Robotiq2FGripperRobotInput', inputMsg.Robotiq2FGripper_robot_input)
+    pub = rospy.Publisher('Robotiq2FGripperRobotInput', inputMsg.Robotiq2FGripper_robot_input, queue_size=1)
 
     #The Gripper command is received from the topic named 'Robotiq2FGripperRobotOutput'
     rospy.Subscriber('Robotiq2FGripperRobotOutput', outputMsg.Robotiq2FGripper_robot_output, gripper.refreshCommand)
@@ -86,5 +87,5 @@ def mainLoop(device):
             
 if __name__ == '__main__':
     try:
-        mainLoop(sys.argv[1])
+        mainLoop()
     except rospy.ROSInterruptException: pass
